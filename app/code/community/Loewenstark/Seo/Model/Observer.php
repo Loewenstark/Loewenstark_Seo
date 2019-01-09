@@ -38,6 +38,14 @@ class Loewenstark_Seo_Model_Observer
             'values'    => Mage::getSingleton('loewenstark_seo/system_config_source_cms_robots')->toOptionArray(),
             'disabled'  => $isElementDisabled,
         ));
+
+        $meta_fieldset = $form->getElement('meta_fieldset');
+        $meta_fieldset->addField('meta_title', 'text', array(
+            'name' => 'meta_title',
+            'label' => Mage::helper('loewenstark_seo')->__('Meta Title'),
+            'title' => Mage::helper('loewenstark_seo')->__('Meta Title'),
+            'disabled'  => $isElementDisabled,
+        ));
     }
 
     /**
@@ -86,6 +94,17 @@ class Loewenstark_Seo_Model_Observer
         else
         {
             $this->_setCanonicalHeader($this->getUrl($page->getIdentifier()));
+        }
+
+        $meta_title = $page->getMetaTitle();
+        $meta_title = trim($meta_title);
+        if($meta_title && $meta_title!="")
+        {
+            try {
+                Mage::app()->getLayout()->getBlock('head')->setTitle($meta_title);       
+            } catch (Exception $e) {
+                Mage::log($e->getMessage(), null, 'loewenstark_seo.log', false);
+            }
         }
     }
 
